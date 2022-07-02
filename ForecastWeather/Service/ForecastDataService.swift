@@ -17,6 +17,7 @@ class ForecastDataService: ForecastDataProtocol {
     private var jsonDecoder: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .useDefaultKeys
+        decoder.dateDecodingStrategy = .secondsSince1970
         return decoder
     }
     
