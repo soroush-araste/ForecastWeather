@@ -10,8 +10,8 @@ import SwiftUI
 
 struct ForecastViewModel {
         
-    let forecast: Daily
-    let current: Current
+    let dailyForecast: DomainDaily
+    let current: DomainCurrent
   
     private static var dateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
@@ -38,23 +38,23 @@ struct ForecastViewModel {
     }
     
     var day: String {
-        return Self.dateFormatter.string(from: forecast.date)
+        return Self.dateFormatter.string(from: dailyForecast.date)
     }
     
     var overview: String {
-        return forecast.weather[0].description.capitalized
+        return dailyForecast.weather[0].description.capitalized
     }
     
     var high: String {
-        return "\(Self.numberFormatter.string(for: forecast.temp.max) ?? "-")°"
+        return "\(Self.numberFormatter.string(for: dailyForecast.temp.max) ?? "-")°"
     }
     
     var low: String {
-        return "\(Self.numberFormatter.string(for: forecast.temp.min) ?? "-")°"
+        return "\(Self.numberFormatter.string(for: dailyForecast.temp.min) ?? "-")°"
     }
     
     var humidity: String {
-        return "Humidity \(forecast.humidity)%"
+        return "Humidity \(dailyForecast.humidity)%"
     }
     
     var currentTemp: String {
@@ -62,35 +62,35 @@ struct ForecastViewModel {
     }
     
     var eachDayTemp: String {
-        return "\(Self.numberFormatter.string(for: forecast.temp.day) ?? "-")°"
+        return "\(Self.numberFormatter.string(for: dailyForecast.temp.day) ?? "-")°"
     }
     
     var uvIndex: String {
-        return "\(Self.numberFormatter.string(for: forecast.uvIndex) ?? "-")"
+        return "\(Self.numberFormatter.string(for: dailyForecast.uvIndex) ?? "-")"
     }
     
     var feelsLike: String {
-        return "\(Self.numberFormatter.string(for: forecast.feelsLike.day) ?? "-")"
+        return "\(Self.numberFormatter.string(for: dailyForecast.feelsLike.day) ?? "-")"
     }
     
     var pressure: String {
-        return "\(Self.numberFormatter.string(for: forecast.pressure) ?? "-")"
+        return "\(Self.numberFormatter.string(for: dailyForecast.pressure) ?? "-")"
     }
     
     var windSpeed: String {
-        return "\(Self.numberFormatter.string(for: forecast.windSpeed) ?? "-")"
+        return "\(Self.numberFormatter.string(for: dailyForecast.windSpeed) ?? "-")"
     }
     
     var sunrise: String {
-        return Self.dateFormatter2.string(from: forecast.sunrise)
+        return Self.dateFormatter2.string(from: dailyForecast.sunrise)
     }
     
     var sunset: String {
-        return Self.dateFormatter2.string(from: forecast.sunset)
+        return Self.dateFormatter2.string(from: dailyForecast.sunset)
     }
     
     var moonrise: String {
-        return Self.dateFormatter2.string(from: forecast.moonrise)
+        return Self.dateFormatter2.string(from: dailyForecast.moonrise)
     }
     
     func formattedTemp(temp: Double) -> String {
@@ -98,7 +98,7 @@ struct ForecastViewModel {
     }
     
     var dailyIconURL: URL {
-        let urlString = "https://openweathermap.org/img/wn/\(forecast.weather[0].icon)@2x.png"
+        let urlString = "https://openweathermap.org/img/wn/\(dailyForecast.weather[0].icon)@2x.png"
         return URL(string: urlString)!
     }
     
@@ -114,13 +114,13 @@ struct ForecastViewModel {
             "moonrise": moonrise,
             "uv Index": uvIndex,
             "feels Like": feelsLike,
-            "humidity": "\(forecast.humidity)%",
+            "humidity": "\(dailyForecast.humidity)%",
             "pressure": pressure,
             "wind Speed": windSpeed,
-            "max temperature": formattedTemp(temp: forecast.temp.max),
-            "min temperature": formattedTemp(temp: forecast.temp.min),
-            "day temperature": formattedTemp(temp: forecast.temp.day),
-            "night temperature": formattedTemp(temp: forecast.temp.night)
+            "max temperature": formattedTemp(temp: dailyForecast.temp.max),
+            "min temperature": formattedTemp(temp: dailyForecast.temp.min),
+            "day temperature": formattedTemp(temp: dailyForecast.temp.day),
+            "night temperature": formattedTemp(temp: dailyForecast.temp.night)
         ]
         return detailsDict
     }
