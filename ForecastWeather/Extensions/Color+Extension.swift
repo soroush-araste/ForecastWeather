@@ -16,4 +16,6 @@ struct ColorTheme {
     let searchBarColor = Color("searchBarColor")
     let cardBgColor    = Color("cardbgColor")
     let bgColor        = Color("bgColor")
+    let labelColor     = Color("labelColor")
+    let darkShadow     = Color("darkShadow")
 }
