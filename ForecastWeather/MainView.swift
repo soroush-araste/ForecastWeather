@@ -11,50 +11,57 @@ import Kingfisher
 struct MainView: View {
     
     @EnvironmentObject var vm: ForecastListViewModel
-    
+
     let rows: [GridItem] = [
         GridItem(.fixed(200))
     ]
     
     var body: some View {
         NavigationView {
-            ZStack {
-                ScrollView {
-                    VStack {
-                        SearchBarView(searchText: $vm.searchCityName)
-                        currentTempSection
-                            .padding()
-                            .cornerRadius(10)
-                            .onTapGesture {
-                                UIApplication.shared.endEditing()
-                            }
+            if vm.showError {
+                PopupView(errorMessage: $vm.errorMessage, retryButtonPressed: {
+                    vm.refreshData()
+                })
+            } else {
+                ZStack {
+                    ScrollView {
+                        VStack {
+                            SearchBarView(searchText: $vm.searchCityName)
+                            currentTempSection
+                                .padding()
+                                .cornerRadius(10)
+                                .onTapGesture {
+                                    UIApplication.shared.endEditing()
+                                }
+                        }
+                        
+                        gridListTitle
+                        
+                        horizontalGrid
                     }
-                    
-                    gridListTitle
-                    
-                    horizontalGrid
-                }
-                .background(Color.theme.bgColor)
-                .navigationBarTitle("")
-                .navigationBarHidden(true)
-            }
-            .overlay {
-                if vm.isLoading {
-                    ZStack {
-                        Color(.systemBackground)
-                            .ignoresSafeArea()
-                            .opacity(0.9)
-                            .blur(radius: 10)
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .primary))
-                            .scaleEffect(2)
+                    .background(Color.theme.bgColor)
+                    .navigationBarTitle("")
+                    .navigationBarHidden(true)
+                }.zIndex(-1)
+                //.banner(data: $vm.bannerData, show: $vm.showError)
+                .overlay {
+                    if vm.isLoading {
+                        ZStack {
+                            Color(.systemBackground)
+                                .ignoresSafeArea()
+                                .opacity(0.9)
+                                .blur(radius: 10)
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .primary))
+                                .scaleEffect(2)
+                        }
                     }
                 }
             }
         }
         
         .onAppear {
-            vm.refreshData()
+            //vm.refreshData()
         }
     }
 }
