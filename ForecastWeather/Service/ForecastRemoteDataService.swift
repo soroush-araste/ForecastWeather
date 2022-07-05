@@ -28,8 +28,16 @@ class ForecastRemoteDataService: ForecastDataSource {
     }
     
     func getForecast() -> AnyPublisher<Forecast,Error> {
-        return NetworkingManager.getData(url: url)
-               .decode(type: Forecast.self, decoder: jsonDecoder)
-               .eraseToAnyPublisher()
+        let decoder = jsonDecoder
+        return NetworkManager.getData(url: url)
+            .tryMap { data in
+                do {
+                    return try decoder.decode(Forecast.self, from: data)
+                }
+                catch {
+                    throw APIError.decodingError(error)
+                }
+            }
+            .eraseToAnyPublisher()
     }
 }
