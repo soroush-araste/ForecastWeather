@@ -43,19 +43,19 @@ struct MainView: View {
                     .navigationBarTitle("")
                     .navigationBarHidden(true)
                 }.zIndex(-1)
-                //.banner(data: $vm.bannerData, show: $vm.showError)
-                .overlay {
-                    if vm.isLoading {
-                        ZStack {
-                            Color(.systemBackground)
-                                .ignoresSafeArea()
-                                .opacity(0.9)
-                                .blur(radius: 10)
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .primary))
-                                .scaleEffect(2)
-                        }
-                    }
+                .banner(data: $vm.bannerData, show: $vm.showBanner)
+            }
+        }
+        .overlay {
+            if vm.isLoading {
+                ZStack {
+                    Color(.systemBackground)
+                        .ignoresSafeArea()
+                        .opacity(0.9)
+                        .blur(radius: 10)
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .primary))
+                        .scaleEffect(2)
                 }
             }
         }
