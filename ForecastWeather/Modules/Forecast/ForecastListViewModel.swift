@@ -17,8 +17,10 @@ class ForecastListViewModel: ObservableObject  {
     @Published var isLoading: Bool = false
     @Published var city: String = "Paris"
     @Published var showError: Bool = false
+    @Published var showBanner: Bool = false
     
-    //@Published var bannerData: BannerModifier.BannerData = BannerModifier.BannerData(title: "", detail: "Notification text for the action you were trying to perform.", type: .Error)
+    @Published var bannerData: BannerModifier.BannerData = BannerModifier.BannerData(title: "", detail: "", type: .Error)
+    
     var errorMessage: String = ""
     var currentURL: URL?
     var anyCancellable = Set<AnyCancellable>()
@@ -32,12 +34,14 @@ class ForecastListViewModel: ObservableObject  {
         getDataFromRepository(url: defaultURL)
     }
     
-    func urlCreator(lat: Double = 48.857191, lon: Double = 2.352902) -> URL {
+    func urlCreator(lat: Double = Constants.DefaultLocation.lat, lon: Double = Constants.DefaultLocation.lon) -> URL {
         //Default location is Paris!
-        let URLString = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(lon)&exclude=minutely,hourly,alerts&units=metric&appid=db9e0317c0efaa1bcd7111d4c063cd2a"
-        let url = URL(string: URLString)!
-        currentURL = url
-        return url
+        var urlComponents = Constants.getBaseURLComponents()
+        let queryItemLat = URLQueryItem(name: "lat", value: "\(lat)")
+        let queryItemLon = URLQueryItem(name: "lon", value: "\(lon)")
+        urlComponents.queryItems?.append(contentsOf: [queryItemLat, queryItemLon])
+        currentURL = urlComponents.url
+        return urlComponents.url!
     }
     
     func getDataFromRepository(url: URL) {
@@ -46,13 +50,11 @@ class ForecastListViewModel: ObservableObject  {
         isLoading = true
         repository?.get()
             .sink(receiveCompletion: { [weak self] completion in
+                self?.isLoading = false
                 switch completion{
                 case .finished:
-                    self?.isLoading = false
+                    self?.showError = false
                 case .failure(let error):
-                    self?.isLoading = false
-                    //uncomment this line to show a banner for erro
-                    //self?.bannerData = BannerModifier.BannerData(title: "ERROR:", detail: error.localizedDescription, type: .Error)
                     self?.errorMessage = error.localizedDescription
                     self?.showError = true
                 }
@@ -67,12 +69,13 @@ class ForecastListViewModel: ObservableObject  {
         
     func refreshData() {
         guard let url = currentURL else { return }
+        showError = false
         getDataFromRepository(url: url)
     }
     
     func getCityWeather() {
         $searchCityName
-            .debounce(for: 1, scheduler: DispatchQueue.main)
+            .debounce(for: 0.6, scheduler: DispatchQueue.main)
             .sink { [weak self] name in
                 guard let self = self else { return }
                 self.getCityLocation(cityName: name) { lat, lon in
@@ -90,7 +93,8 @@ class ForecastListViewModel: ObservableObject  {
         }
         CLGeocoder().geocodeAddressString(cityName) { [weak self] placeMark, error in
             if let _ = error {
-                self?.city = "not found"
+                self?.bannerData = BannerModifier.BannerData(title: "not found".capitalized, detail: "The city you were looking for not found!", type: .Error)
+                self?.showBanner = true
                 return
             }
             self?.city = cityName
