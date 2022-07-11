@@ -97,15 +97,15 @@ extension MainView {
                 Text(vm.city)
                     .font(.system(size: 45))
                     .foregroundColor(.white)
-                KFImage.url(vm.forecastViewModelItems.first?.currentIconURL)
-                    .placeholder({
-                        Image(systemName: "hourglass")
-                    })
+                Image(systemName: vm.forecastViewModelItems.first?.currentIconName ?? "hourglass")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 120, height: 120)
+                    .frame(width: 80, height: 80)
                     .clipped()
-            }.padding(.trailing, 25)
+                    .foregroundColor(.white)
+            }
+            .padding(.trailing, 25)
+            .padding(.bottom, 30)
         }
         .background {
             RoundedRectangle(cornerRadius: 30)
@@ -141,10 +141,7 @@ extension MainView {
                                     Text(item.day)
                                         .fontWeight(.semibold)
                                         .font(.title2)
-                                    KFImage.url(item.dailyIconURL)
-                                        .placeholder({
-                                            Image(systemName: "hourglass")
-                                        })
+                                    Image(systemName: item.dailyIconName)
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 60, height: 50)
